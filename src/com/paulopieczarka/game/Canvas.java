@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import com.paulopieczarka.server.PacketWorld;
+
 public class Canvas extends JPanel implements Runnable, KeyListener
 {
 	private static final long serialVersionUID = 1L;
@@ -22,6 +24,12 @@ public class Canvas extends JPanel implements Runnable, KeyListener
 	protected IGame game;
 	protected World  world;
 	protected Player player;
+	
+	// System performance.
+	private long lastupdate;
+	private int downBytes;
+	private int lastDownBytes;
+	private int responseTime;
 	
 	public void init(IGame game, Player player) throws RemoteException 
 	{
@@ -40,18 +48,21 @@ public class Canvas extends JPanel implements Runnable, KeyListener
 		{
 			Player player = remotePlayers.get(i);
 			
-			float x = player.getX()*32;
-			float y = player.getY()*32;
+			float x = player.getX()*32 + 16;
+			float y = player.getY()*32 + 16;
 			g.translate(x, y);
+			g.rotate(Math.toRadians(player.getRotation()));
 			
 			g.setColor(player.getColor());
-			g.fillRect(0, 0, 32, 32);
+			g.fillRect(-16, -16, 32, 32);
 			
 			g.setColor(player.getHairColor());
-			g.fillRect(0, 0, 32, 8);
+			g.fillRect(-16, -16, 32, 8);
+			
+			g.rotate(-Math.toRadians(player.getRotation()));
 			
 			g.setColor(Color.WHITE);
-			g.drawString(player.getName(), 16-g.getFontMetrics().stringWidth(player.getName())/2, -5);
+			g.drawString(player.getName(), -g.getFontMetrics().stringWidth(player.getName())/2, -28);
 			
 			g.translate(-x, -y);
 		}
@@ -65,13 +76,28 @@ public class Canvas extends JPanel implements Runnable, KeyListener
 				g.setColor(Color.GRAY);
 			}
 			
-			g.drawString(line, 10, getHeight()-(18*i+10));
+			g.drawString(line, 10, getHeight()-(18*(world.getChat().size()-(i+1))+10));
 		}
+		
+		g.setColor(Color.WHITE);
+		g.drawString("Down: "+lastDownBytes+"bytes/s ("+responseTime+"ms)", 10, 20);
+		g.drawString("Players: "+world.getList().size(), 10, 40);
 	}
 	
 	public void update() throws RemoteException
 	{
-		world = game.getWorld();
+		long st = System.currentTimeMillis();
+		
+		PacketWorld worldUpdates = game.updateWorld(player.hashCode());
+		world.unmountPacket(worldUpdates);
+		downBytes += worldUpdates.getSize();
+		if(lastupdate+1000 <= System.currentTimeMillis()) 
+		{
+			lastDownBytes = downBytes/60;
+			downBytes = 0;
+			lastupdate = System.currentTimeMillis();
+			responseTime = (int)(System.currentTimeMillis()-st);
+		}
 	}
 	
 	@Override
@@ -81,7 +107,7 @@ public class Canvas extends JPanel implements Runnable, KeyListener
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2d.setFont(new Font("Consolas", Font.BOLD, 14));
 		
-		g2d.setColor(Color.BLACK);
+		g2d.setColor(Color.decode("#7FA34B"));
 		g2d.clearRect(0, 0, getWidth(), getHeight());
 		g2d.fillRect(0, 0, getWidth(), getHeight());
 		
@@ -127,16 +153,16 @@ public class Canvas extends JPanel implements Runnable, KeyListener
 		try 
 		{
 			if(e.getKeyCode() == KeyEvent.VK_LEFT) {
-				game.playerAction(player.hashCode(), EPlayerAction.MOVE_LEFT);
+				game.playerAction(player.hashCode(), EnumAction.MOVE_LEFT);
 			}
 			else if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
-				game.playerAction(player.hashCode(), EPlayerAction.MOVE_RIGHT);
+				game.playerAction(player.hashCode(), EnumAction.MOVE_RIGHT);
 			}
 			else if(e.getKeyCode() == KeyEvent.VK_UP) {
-				game.playerAction(player.hashCode(), EPlayerAction.MOVE_UP);
+				game.playerAction(player.hashCode(), EnumAction.MOVE_UP);
 			}
 			else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
-				game.playerAction(player.hashCode(), EPlayerAction.MOVE_DOWN);
+				game.playerAction(player.hashCode(), EnumAction.MOVE_DOWN);
 			}
 			else if(e.getKeyCode() == KeyEvent.VK_T) {
 				game.chat(player.getName()+": "+JOptionPane.showInputDialog("Type a message:"));

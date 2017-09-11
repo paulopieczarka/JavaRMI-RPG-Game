@@ -1,6 +1,6 @@
 package com.paulopieczarka.game;
 
-public enum EPlayerAction 
+public enum EnumAction 
 {
 	MOVE_LEFT,
 	MOVE_RIGHT,

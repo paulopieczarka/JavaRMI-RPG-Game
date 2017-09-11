@@ -3,7 +3,7 @@ package com.paulopieczarka.server;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-import com.paulopieczarka.game.EPlayerAction;
+import com.paulopieczarka.game.EnumAction;
 import com.paulopieczarka.game.IGame;
 import com.paulopieczarka.game.Player;
 import com.paulopieczarka.game.World;
@@ -29,21 +29,25 @@ public class GameOperation extends UnicastRemoteObject implements IGame
 	}
 
 	@Override
-	public boolean playerAction(int playerKey, EPlayerAction action) throws RemoteException 
+	public boolean playerAction(int playerKey, EnumAction action) throws RemoteException 
 	{
 		Player remotePlayer = remoteWorld.getPlayer(playerKey);
 		
-		if(action.equals(EPlayerAction.MOVE_UP)) {
+		if(action.equals(EnumAction.MOVE_UP)) {
 			remotePlayer.addPosY(-1);
+			remotePlayer.setRotation(0);
 		}
-		else if(action.equals(EPlayerAction.MOVE_DOWN)) {
+		else if(action.equals(EnumAction.MOVE_DOWN)) {
 			remotePlayer.addPosY(1);
+			remotePlayer.setRotation(180);
 		}
-		else if(action.equals(EPlayerAction.MOVE_LEFT)) {
+		else if(action.equals(EnumAction.MOVE_LEFT)) {
 			remotePlayer.addPosX(-1);
+			remotePlayer.setRotation(-90);
 		}
-		else if(action.equals(EPlayerAction.MOVE_RIGHT)) {
+		else if(action.equals(EnumAction.MOVE_RIGHT)) {
 			remotePlayer.addPosX(1);
+			remotePlayer.setRotation(90);
 		}
 		
 		return false;
@@ -66,6 +70,12 @@ public class GameOperation extends UnicastRemoteObject implements IGame
 	@Override
 	public void chat(String text) throws RemoteException {
 		remoteWorld.addChat(text);
+	}
+
+	@Override
+	public PacketWorld updateWorld(int playerKey) throws RemoteException 
+	{
+		return remoteWorld.mountPacket(playerKey);
 	}
 
 }

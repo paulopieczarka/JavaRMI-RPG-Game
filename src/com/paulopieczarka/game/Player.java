@@ -9,6 +9,7 @@ public class Player implements Serializable
 	
 	private int posX;
 	private int posY;
+	private int rotation;
 	
 	private String name;
 	private Color[] color;
@@ -20,6 +21,7 @@ public class Player implements Serializable
 		this.color[0] = color;
 		this.posX = 0;
 		this.posY = 0;
+		this.rotation = 0;
 	}
 	
 	public String getName() {
@@ -58,6 +60,14 @@ public class Player implements Serializable
 	
 	public void addPosY(int amount) {
 		this.posY += amount;
+	}
+	
+	public int getRotation() {
+		return this.rotation;
+	}
+	
+	public void setRotation(int r) {
+		this.rotation = r;
 	}
 	
 	@Override

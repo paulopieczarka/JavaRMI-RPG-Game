@@ -3,7 +3,6 @@ package com.paulopieczarka.server;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
-import java.rmi.server.RemoteObject;
 
 import com.paulopieczarka.app.Main;
 

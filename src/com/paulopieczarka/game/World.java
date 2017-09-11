@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
+import com.paulopieczarka.server.PacketWorld;
+
 public class World implements Serializable
 {
 	private static final long serialVersionUID = 1L;
@@ -44,8 +46,7 @@ public class World implements Serializable
 		return newPlayer;
 	}
 	
-	public Player getPlayer(int playerKey)
-	{
+	public Player getPlayer(int playerKey) {
 		return playerList.get(playerKey);
 	}
 	
@@ -73,5 +74,19 @@ public class World implements Serializable
 	
 	public ArrayList<String> getChat() {
 		return this.chatLines;
+	}
+	
+	public void unmountPacket(PacketWorld packet)
+	{
+		this.playerList = packet.playerList;
+		this.chatLines = packet.chatLines;
+	}
+	
+	public PacketWorld mountPacket(int playerKey)
+	{
+		PacketWorld packet = new PacketWorld();
+		packet.playerList = this.playerList;
+		packet.chatLines = this.chatLines;
+		return packet;
 	}
 }
