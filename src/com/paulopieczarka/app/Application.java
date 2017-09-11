@@ -53,7 +53,7 @@ public class Application extends JFrame implements WindowListener
 	{
 		try 
 		{
-			game.disconnect(player);
+			game.disconnect(player.hashCode());
 		} 
 		catch (RemoteException e1) {
 			e1.printStackTrace();

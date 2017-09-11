@@ -3,6 +3,7 @@ package com.paulopieczarka.game;
 import java.awt.Color;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 public class World implements Serializable
@@ -14,12 +15,14 @@ public class World implements Serializable
 	
 	private String name;
 	
-	private ArrayList<Player> playerList;
+	private HashMap<Integer, Player> playerList;
+	private ArrayList<String> chatLines;
 	
 	public World(String name)
 	{
 		this.name = name;
-		this.playerList = new ArrayList<>();
+		this.playerList = new HashMap<>();
+		this.chatLines = new ArrayList<>();
 	}
 	
 	public String getName() {
@@ -30,44 +33,45 @@ public class World implements Serializable
 	{
 		Random rand = new Random(name.hashCode());
 		Color color = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
+		Color hair = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
 		
 		Player newPlayer = new Player(name, color);
 		newPlayer.setLocation(rand.nextInt(WIDTH)/32, rand.nextInt(HEIGHT)/32);
+		newPlayer.setHairColor(hair);
 		
-		playerList.add(newPlayer);
+		addChat("Player "+name+" is online.");
+		playerList.put(newPlayer.hashCode(), newPlayer);
 		return newPlayer;
 	}
 	
-	public Player getPlayer(int index) {
-		return this.playerList.get(index);
-	}
-	
-	public Player getPlayer(Player player)
+	public Player getPlayer(int playerKey)
 	{
-		for(int i=0; i < playerList.size(); i++)
-		{
-			if(playerList.get(i).getName().equalsIgnoreCase(player.getName())) {
-				return playerList.get(i);
-			}
-		}
-		
-		return null;
+		return playerList.get(playerKey);
 	}
 	
-	public ArrayList<Player> getList() {
-		return this.playerList;
-	}
-	
-	public boolean removePlayer(Player player)
+	public ArrayList<Player> getList() 
 	{
-		for(int i=0; i < playerList.size(); i++)
-		{
-			if(playerList.get(i).getName().equalsIgnoreCase(player.getName())) {
-				playerList.remove(i);
-				return true;
-			}
+		ArrayList<Player> players = new ArrayList<>();
+		players.addAll(playerList.values());
+		return players;
+	}
+	
+	public boolean removePlayer(int playerKey)
+	{
+		Player who = getPlayer(playerKey);
+		addChat("Player "+who.getName()+" left.");
+		return playerList.remove(playerKey) != null;
+	}
+	
+	public void addChat(String text)
+	{
+		this.chatLines.add(text);
+		if(chatLines.size() > 6) {
+			chatLines.remove(0);
 		}
-		
-		return false;
+	}
+	
+	public ArrayList<String> getChat() {
+		return this.chatLines;
 	}
 }

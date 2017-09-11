@@ -9,11 +9,13 @@ public interface IGame extends Remote
 	
 	public Player connect(String name) throws RemoteException;
 	
-	public void disconnect(Player player) throws RemoteException;
+	public void disconnect(int playerKey) throws RemoteException;
 	
-	public boolean playerAction(Player player, EPlayerAction action) throws RemoteException;
+	public boolean playerAction(int playerKey, EPlayerAction action) throws RemoteException;
 	
 	/* Game defines. */
 	
 	public World getWorld() throws RemoteException;
+	
+	public void chat(String text) throws RemoteException;
 }

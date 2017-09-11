@@ -24,13 +24,14 @@ public class GameOperation extends UnicastRemoteObject implements IGame
 	@Override
 	public Player connect(String name) throws RemoteException 
 	{
+		System.out.println("[SERVER] Player "+name+" connected.");
 		return remoteWorld.addPlayer(name);
 	}
 
 	@Override
-	public boolean playerAction(Player player, EPlayerAction action) throws RemoteException 
+	public boolean playerAction(int playerKey, EPlayerAction action) throws RemoteException 
 	{
-		Player remotePlayer = remoteWorld.getPlayer(player);
+		Player remotePlayer = remoteWorld.getPlayer(playerKey);
 		
 		if(action.equals(EPlayerAction.MOVE_UP)) {
 			remotePlayer.addPosY(-1);
@@ -55,10 +56,16 @@ public class GameOperation extends UnicastRemoteObject implements IGame
 	}
 
 	@Override
-	public void disconnect(Player player) throws RemoteException 
+	public void disconnect(int playerKey) throws RemoteException 
 	{
-		remoteWorld.removePlayer(player);
-		System.out.println("[SERVER] Player "+player.getName()+" is dead.");
+		Player who = remoteWorld.getPlayer(playerKey);
+		remoteWorld.removePlayer(playerKey);
+		System.out.println("[SERVER] Player "+who.getName()+" is dead.");
+	}
+
+	@Override
+	public void chat(String text) throws RemoteException {
+		remoteWorld.addChat(text);
 	}
 
 }

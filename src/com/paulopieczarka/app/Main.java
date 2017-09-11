@@ -5,7 +5,7 @@ import com.paulopieczarka.client.Client;
 public class Main 
 {
 	public static final String SERVER_NAME = "ServerOfLove";
-	public static final String SERVER_IP = "localhost";
+	public static final String SERVER_IP = "172.18.1.134";
 	public static final int SERVER_PORT = 2020;
 	
 	public static void main(String[] args)

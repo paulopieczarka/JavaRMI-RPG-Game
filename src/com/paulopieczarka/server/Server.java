@@ -3,6 +3,7 @@ package com.paulopieczarka.server;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
+import java.rmi.server.RemoteObject;
 
 import com.paulopieczarka.app.Main;
 
@@ -10,7 +11,7 @@ public class Server
 {
 	public Server() 
 	{
-		System.setProperty("java.rmi.server.hostname", "localhost");
+		System.setProperty("java.rmi.server.hostname", Main.SERVER_IP);
 		
 		try 
 		{

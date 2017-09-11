@@ -30,6 +30,7 @@ public class Client
 			app.show(game, player);
 		}
 		catch (MalformedURLException | RemoteException | NotBoundException e) {
+			JOptionPane.showMessageDialog(null, "Cannot connect to server.");
 			e.printStackTrace();
 		}
 	}

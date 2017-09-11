@@ -11,12 +11,13 @@ public class Player implements Serializable
 	private int posY;
 	
 	private String name;
-	private Color color;
+	private Color[] color;
 	
 	public Player(String name, Color color)
 	{
 		this.name = name;
-		this.color = color;
+		this.color = new Color[2];
+		this.color[0] = color;
 		this.posX = 0;
 		this.posY = 0;
 	}
@@ -26,7 +27,15 @@ public class Player implements Serializable
 	}
 	
 	public Color getColor() {
-		return this.color;
+		return this.color[0];
+	}
+	
+	public Color getHairColor() {
+		return this.color[1];
+	}
+	
+	public void setHairColor(Color color) {
+		this.color[1] = color;
 	}
 	
 	public int getX() {
@@ -54,6 +63,11 @@ public class Player implements Serializable
 	@Override
 	public String toString() {
 		return "Player "+name+" at "+posX+", "+posY+".";
+	}
+	
+	@Override
+	public int hashCode() {
+		return name.hashCode();
 	}
 }
 
